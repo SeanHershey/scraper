@@ -26,8 +26,9 @@ export async function GET() {
     });
 
     if (!response.ok) {
+      const errorText = await response.text().catch(() => "Unknown error");
       return NextResponse.json(
-        { error: "Failed to fetch image" },
+        { error: `Failed to fetch image: ${response.status} ${response.statusText}`, details: errorText },
         { status: response.status }
       );
     }
@@ -35,8 +36,9 @@ export async function GET() {
     const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
-      { error: "Failed to fetch image" },
+      { error: `Failed to fetch image: ${errorMessage}` },
       { status: 500 }
     );
   }
